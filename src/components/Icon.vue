@@ -1,5 +1,5 @@
 <template>
-	<i class="iconfont" :class="className" :style="{color: color, fontSize: size + 'px'}"></i>
+	<i class="icon iconfont" :class="className" :style="{color: color, fontSize: size + 'px'}"></i>
 </template>
 
 <script>
@@ -32,7 +32,7 @@ export default {
 </script>
 
 <style lang="less">
-.iconfont{
+.icon{
   display: inline-block;
   vertical-align: middle;
   width: 0.586667rem;

@@ -1,10 +1,17 @@
 <template>
   <div id="app" class="cold">
-    <div class="weather-icon">
+    <transition name="fadeInDown">
+      <div v-if="ready" class="weather-icon iconfont" :class="weatherCode">
+      </div>
+    </transition>
+    <p v-if="ready" class="weather-text">{{now.text}}</p>
+    <p class="location">{{location}}</p>
+    <div class="info">
+      {{now.temperature}}
     </div>
     <div class="bottom-nav">
-      <Icon :iconClass='"question-mark"' :color='"#fff"'></Icon>
-      <Icon :iconClass='"add"' :color='"#fff"'></Icon>
+      <Icon class="pull-left" :iconClass='"question-mark"' :color='"#fff"'></Icon>
+      <Icon class="pull-right" :iconClass='"add"' :color='"#fff"'></Icon>
     </div>
   </div>
 </template>
@@ -18,11 +25,19 @@ export default {
   name: 'App',
   data () {
     return {
-      location: '北京'
+      ready: false,
+      location: '北京',
+      now: {
+        code: '0',
+        temperature: '0',
+        text: '晴'
+      }
     }
   },
   computed: {
-
+    weatherCode () {
+      return 'icon-code_' + this.now.code
+    }
   },
   watch: {
 
@@ -49,7 +64,12 @@ export default {
     // 构造最终请求的 url
     let url = API + '?location=' + this.location + '&' + str
 
-    this.$http.jsonp(url).then((res) => { console.log(res.body.results[0]) })
+    this.$http.jsonp(url).then((res) => {
+      let data = res.body.results[0]
+      console.log(data)
+      this.ready = true
+      this.now = data.now
+    })
   },
   beforeDestroy () {
     // 把数据保存到localstorge
@@ -76,6 +96,34 @@ body{
   width: 100%;
   height: 100%;
   position: relative;
+  .weather-icon{
+    width: 100%;
+    height: 4.8rem;
+    padding-top: 2.666667rem;
+    padding-bottom: 1.0rem;
+    font-size: 4.8rem;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+  }
+  .weather-text {
+    font-size: 90px;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+  }
+  .location {
+    margin: 0.8rem 0;
+    font-size: 36px;
+    color: #fff;
+    line-height: 1;
+    text-align: center;
+  }
+  .info {
+    width: 100%;
+    height: 2.133333rem;
+    background-color: rgba(255, 255, 255, .43)
+  }
   .bottom-nav{
     position: absolute;
     bottom: 0;
@@ -99,5 +147,26 @@ body{
     }
   }
 }
-
+.pull-left {
+  float: left;
+}
+.pull-right {
+  float: right;
+}
+.fadeInDown-enter-active {
+  animation: fadeInDown 1s;
+}
+.fadeInDown-leave-active {
+  animation: fadeInDown 1s reverse;
+}
+@keyframes fadeInDown{
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -50%, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
 </style>
